@@ -20,7 +20,7 @@ import java.util.UUID;
 public class UploadFileServiceImpl implements UploadFileService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UploadFileServiceImpl.class);
-    private static final String UPLOADS_FOLDER = "uploads";
+    private static final String UPLOADS_FOLDER = "spring-boot-backend-apirest/uploads";
 
     @Override
     public Resource upload(String fileName) throws MalformedURLException {
