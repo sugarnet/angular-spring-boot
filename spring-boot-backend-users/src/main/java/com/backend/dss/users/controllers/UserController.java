@@ -2,8 +2,10 @@ package com.backend.dss.users.controllers;
 
 import com.backend.dss.users.entities.User;
 import com.backend.dss.users.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin(origins = {"http://localhost:4200"})
@@ -45,12 +49,22 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> save(@RequestBody User user) {
+    public ResponseEntity<?> save(@Valid @RequestBody User user, BindingResult result) {
+
+        if (result.hasErrors()) {
+            return validation(result);
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(user));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user) {
+    public ResponseEntity<?> update(@Valid @RequestBody User user, BindingResult result, @PathVariable Long id) {
+
+        if (result.hasErrors()) {
+            return validation(result);
+        }
+
         Optional<User> userOptional = userService.findById(id);
         if (userOptional.isPresent()) {
             User updatedUser = userOptional.get();
@@ -72,5 +86,12 @@ public class UserController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    private static ResponseEntity<Map<String, String>> validation(BindingResult result) {
+        Map<String, String> errors = new HashMap<>();
+        result.getFieldErrors().forEach(error -> errors.put(error.getField(),
+                error.getField() + ": " + error.getDefaultMessage()));
+        return ResponseEntity.badRequest().body(errors);
     }
 }
