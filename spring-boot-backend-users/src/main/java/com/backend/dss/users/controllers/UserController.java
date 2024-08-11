@@ -90,8 +90,7 @@ public class UserController {
 
     private static ResponseEntity<Map<String, String>> validation(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
-        result.getFieldErrors().forEach(error -> errors.put(error.getField(),
-                error.getField() + ": " + error.getDefaultMessage()));
+        result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         return ResponseEntity.badRequest().body(errors);
     }
 }
