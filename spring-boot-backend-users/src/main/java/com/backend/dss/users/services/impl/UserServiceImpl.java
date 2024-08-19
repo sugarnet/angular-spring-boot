@@ -3,6 +3,8 @@ package com.backend.dss.users.services.impl;
 import com.backend.dss.users.entities.User;
 import com.backend.dss.users.repositories.UserRepository;
 import com.backend.dss.users.services.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findAll() {
         return (List<User>) userRepository.findAll();
+    }
+
+    @Override
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     @Transactional(readOnly = true)
