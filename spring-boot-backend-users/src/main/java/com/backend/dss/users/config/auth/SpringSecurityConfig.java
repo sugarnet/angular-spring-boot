@@ -1,4 +1,4 @@
-package com.backend.dss.users.config;
+package com.backend.dss.users.config.auth;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
