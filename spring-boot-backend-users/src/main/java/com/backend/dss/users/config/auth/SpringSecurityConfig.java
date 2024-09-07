@@ -1,6 +1,7 @@
 package com.backend.dss.users.config.auth;
 
 import com.backend.dss.users.config.auth.filter.JwtAuthenticationFilter;
+import com.backend.dss.users.config.auth.filter.JwtValidationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -42,9 +43,10 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/users/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/{id}").hasRole("ADMIN")
                         .anyRequest().authenticated())
-                        .addFilter(new JwtAuthenticationFilter(authenticationManager()))
-                        .csrf(CsrfConfigurer::disable)
-                        .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilter(new JwtAuthenticationFilter(authenticationManager()))
+                .addFilter(new JwtValidationFilter(authenticationManager()))
+                .csrf(CsrfConfigurer::disable)
+                .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                         .build();
     }
 }
