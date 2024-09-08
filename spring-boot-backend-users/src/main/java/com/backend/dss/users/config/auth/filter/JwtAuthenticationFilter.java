@@ -45,20 +45,27 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             throw new RuntimeException(e);
         }
 
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,
+                password);
 
         return authenticationManager.authenticate(authenticationToken);
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) authResult.getPrincipal();
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                            FilterChain chain, Authentication authResult) throws IOException,
+            ServletException {
+        org.springframework.security.core.userdetails.User user =
+                (org.springframework.security.core.userdetails.User) authResult.getPrincipal();
         String username = user.getUsername();
 
         Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
-        Claims claims = Jwts.claims().add("authorities", new ObjectMapper().writeValueAsString(authorities)).add("username", username).build();
+        boolean isAdmin = authorities.stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+        Claims claims = Jwts.claims().add("authorities", new ObjectMapper().writeValueAsString(authorities)).add(
+                "username", username).add("isAdmin", isAdmin).build();
 
-        String jwt = Jwts.builder().subject(username).claims(claims).signWith(TokenJwtConfig.SECRET_KEY).issuedAt(new Date()).expiration(new Date(System.currentTimeMillis() + 3600000)).compact();
+        String jwt =
+                Jwts.builder().subject(username).claims(claims).signWith(TokenJwtConfig.SECRET_KEY).issuedAt(new Date()).expiration(new Date(System.currentTimeMillis() + 3600000)).compact();
 
         response.addHeader(HttpHeaders.AUTHORIZATION, TokenJwtConfig.TOKEN_PREFIX + jwt);
         Map<String, String> body = new HashMap<>();
@@ -73,7 +80,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                              AuthenticationException failed) throws IOException, ServletException {
         Map<String, String> body = new HashMap<>();
         body.put("message", "Username or Password is incorrect");
         body.put("error", failed.getMessage());

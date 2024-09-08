@@ -1,6 +1,7 @@
 package com.backend.dss.users.services;
 
 import com.backend.dss.users.entities.User;
+import com.backend.dss.users.models.UserUpdateRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -15,6 +16,8 @@ public interface UserService {
     Optional<User> findById(Long id);
 
     User save(User user);
+
+    Optional<User> update(UserUpdateRequest user, Long id);
 
     void deleteById(Long id);
 }
