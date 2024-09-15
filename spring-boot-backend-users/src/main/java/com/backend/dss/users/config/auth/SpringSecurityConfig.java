@@ -53,11 +53,11 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/users/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/{id}").hasRole("ADMIN")
                         .anyRequest().authenticated())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .addFilter(new JwtAuthenticationFilter(authenticationManager()))
-                .addFilter(new JwtValidationFilter(authenticationManager()))
-                .csrf(CsrfConfigurer::disable)
-                .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                        .addFilter(new JwtAuthenticationFilter(authenticationManager()))
+                        .addFilter(new JwtValidationFilter(authenticationManager()))
+                        .csrf(CsrfConfigurer::disable)
+                        .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                         .build();
     }
 

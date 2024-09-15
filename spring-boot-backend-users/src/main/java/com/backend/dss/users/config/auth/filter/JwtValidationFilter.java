@@ -41,7 +41,8 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (Objects.isNull(header) || header.isBlank() || !header.startsWith(TokenJwtConfig.TOKEN_PREFIX)) {
-            throw new JwtException("Invalid Token");
+            chain.doFilter(request, response);
+            return;
         }
 
         String token = header.replace(TokenJwtConfig.TOKEN_PREFIX, "");
